@@ -8,4 +8,17 @@
   Run `npm i` to install the dependencies.
 
   Run `npm run dev` to start the development server.
-  
+
+  ## Deploy on Cloudflare Pages
+
+  This app is a Vite + React SPA. Use **Cloudflare Pages** with your Git repo:
+
+  1. **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → pick this repository.
+  2. **Build configuration:**
+     - **Root directory:** `Studentportfoliositecommunity-main`
+     - **Build command:** `npm ci && npm run build`
+     - **Build output directory:** `dist`
+  3. **Environment variables (optional):** set `NODE_VERSION` to `20` (or rely on `.nvmrc`; Cloudflare reads it when using **Framework preset: None** or set the env var).
+  4. Deploy. After the first build, assign a custom domain under **Custom domains** if needed.
+
+  `public/_redirects` sends all routes to `index.html` so React Router (e.g. `/project/:id`, `/author/:id`) works on refresh and deep links.
