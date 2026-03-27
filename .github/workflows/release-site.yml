@@ -1,0 +1,48 @@
+# Tag a release as v* (e.g. v1.0.0) to build the site and publish a GitHub Release with zip + build-info.json.
+name: Release site
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: Studentportfoliositecommunity-main/package-lock.json
+
+      - name: Install and build
+        working-directory: Studentportfoliositecommunity-main
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package dist
+        run: |
+          cd Studentportfoliositecommunity-main
+          zip -r "../kinectproject-site-${{ github.ref_name }}.zip" dist
+          cp "dist/build-info.json" "../build-info.json"
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            kinectproject-site-${{ github.ref_name }}.zip
+            build-info.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -23,3 +23,11 @@
   5. Deploy. After the first build, assign a custom domain under **Custom domains** if needed.
 
   `public/_redirects` sends all routes to `index.html` so React Router (e.g. `/project/:id`, `/author/:id`) works on refresh and deep links.
+
+  ## Build metadata
+
+  Each `npm run build` writes **`dist/build-info.json`** (version, `builtAt`, git SHA in CI, Node version). Fetch it at **`/build-info.json`** on the deployed site to verify what build is live.
+
+  ## GitHub Releases
+
+  Push a tag matching **`v*`** (for example `v1.0.0`) to run **Release site** — it uploads **`kinectproject-site-v1.0.0.zip`** (full `dist/`) and **`build-info.json`** to a GitHub Release. CI also runs **Build site** on every push to `main` and stores **`dist`** as a workflow artifact.

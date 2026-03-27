@@ -1,0 +1,41 @@
+# Build the Vite site on every push to main (and PRs) — uploads dist as an artifact.
+name: Build site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Studentportfoliositecommunity-main
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: Studentportfoliositecommunity-main/package-lock.json
+
+      - name: Install and build
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-dist-${{ github.sha }}
+          path: Studentportfoliositecommunity-main/dist
+          if-no-files-found: error
